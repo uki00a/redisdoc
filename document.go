@@ -5,13 +5,13 @@ import (
 	"io"
 )
 
-type CommandDescription struct {
+type Document struct {
 	Name     string
 	Args     []string
 	Metadata []string
 }
 
-func ParseDocument(body io.Reader) (*CommandDescription, error) {
+func ParseDocument(body io.Reader) (*Document, error) {
 	doc, err := goquery.NewDocumentFromReader(body)
 	if err != nil {
 		return nil, err
@@ -29,10 +29,10 @@ func ParseDocument(body io.Reader) (*CommandDescription, error) {
 	articleMainSelection.Find(".metadata").Each(func(_ int, selection *goquery.Selection) {
 		metadata = append(metadata, selection.Text())
 	})
-	cmdDescription := &CommandDescription{
+	document := &Document{
 		Name:     name,
 		Args:     args,
 		Metadata: metadata,
 	}
-	return cmdDescription, nil
+	return document, nil
 }

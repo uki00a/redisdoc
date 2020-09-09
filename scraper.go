@@ -12,14 +12,14 @@ type scraper struct {
 }
 
 type Scraper interface {
-	Scrape(ctx context.Context, url *url.URL) (*CommandDescription, error)
+	Scrape(ctx context.Context, url *url.URL) (*Document, error)
 }
 
 func NewScraper(httpClient *http.Client) Scraper {
 	return &scraper{httpClient}
 }
 
-func (s *scraper) Scrape(ctx context.Context, url *url.URL) (*CommandDescription, error) {
+func (s *scraper) Scrape(ctx context.Context, url *url.URL) (*Document, error) {
 	resp, err := s.request(ctx, url)
 	defer resp.Body.Close()
 	if err != nil {
