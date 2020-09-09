@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"io"
 	"net/http"
 	"net/url"
 )
@@ -13,27 +11,21 @@ type scraper struct {
 	httpClient *http.Client
 }
 
-type commandDescription struct {
-	Name     string
-	Args     []string
-	Metadata []string
-}
-
 type Scraper interface {
-	Scrape(ctx context.Context, url *url.URL) (*commandDescription, error)
+	Scrape(ctx context.Context, url *url.URL) (*CommandDescription, error)
 }
 
 func NewScraper(httpClient *http.Client) Scraper {
 	return &scraper{httpClient}
 }
 
-func (s *scraper) Scrape(ctx context.Context, url *url.URL) (*commandDescription, error) {
+func (s *scraper) Scrape(ctx context.Context, url *url.URL) (*CommandDescription, error) {
 	resp, err := s.request(ctx, url)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	return parseDocument(resp.Body)
+	return ParseDocument(resp.Body)
 }
 
 func (s *scraper) request(ctx context.Context, url *url.URL) (*http.Response, error) {
@@ -67,30 +59,4 @@ func (s *scraper) request(ctx context.Context, url *url.URL) (*http.Response, er
 	case <-ctx.Done():
 		return nil, fmt.Errorf("canceled")
 	}
-}
-
-func parseDocument(body io.Reader) (*commandDescription, error) {
-	doc, err := goquery.NewDocumentFromReader(body)
-	if err != nil {
-		return nil, err
-	}
-
-	cmdSelection := doc.Find(".command")
-	name := cmdSelection.Find(".name").Text()
-	args := []string{}
-	cmdSelection.Find(".arg").Each(func(_ int, selection *goquery.Selection) {
-		args = append(args, selection.Text())
-	})
-
-	articleMainSelection := doc.Find(".article-main")
-	metadata := []string{}
-	articleMainSelection.Find(".metadata").Each(func(_ int, selection *goquery.Selection) {
-		metadata = append(metadata, selection.Text())
-	})
-	cmdDescription := &commandDescription{
-		Name:     name,
-		Args:     args,
-		Metadata: metadata,
-	}
-	return cmdDescription, nil
 }
