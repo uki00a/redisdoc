@@ -17,6 +17,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "expected at least one argument")
 		os.Exit(1)
 	}
+
 	scraper := NewScraper(http.DefaultClient)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -26,9 +27,11 @@ func main() {
 		log.Fatalf("could not parse URL: %v", err)
 	}
 
-	description, err := scraper.Scrape(ctx, url)
+	doc, err := scraper.Scrape(ctx, url)
 	if err != nil {
 		log.Fatalf("could not fetch document: %v", err)
 	}
-	fmt.Printf("%v\n", description)
+
+	printer := NewPrinter(os.Stdout, doc)
+	printer.Print()
 }

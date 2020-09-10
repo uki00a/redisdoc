@@ -51,7 +51,7 @@ func TestScraper(t *testing.T) {
 	if result == nil {
 		t.Errorf("result should not be nil")
 	}
-	if result.Name != "GET" {
-		t.Errorf("GET expected, but got %s", result.Name)
+	if result.CmdName != "GET" {
+		t.Errorf("GET expected, but got %s", result.CmdName)
 	}
 }

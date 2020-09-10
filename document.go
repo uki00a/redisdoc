@@ -6,8 +6,19 @@ import (
 )
 
 type Document struct {
-	Name     string
-	Args     []string
+	CmdName string
+	Args    []string
+	Article *Article
+}
+
+type Article struct {
+	Nodes []Node
+}
+
+type Node interface{}
+
+type Metadata struct {
+	Node
 	Metadata []string
 }
 
@@ -25,14 +36,23 @@ func ParseDocument(body io.Reader) (*Document, error) {
 	})
 
 	articleMainSelection := doc.Find(".article-main")
-	metadata := []string{}
-	articleMainSelection.Find(".metadata").Each(func(_ int, selection *goquery.Selection) {
-		metadata = append(metadata, selection.Text())
+	nodes := []Node{}
+	articleMainSelection.Children().Each(func(_ int, selection *goquery.Selection) {
+		switch {
+		case selection.Is(".metadata"):
+			metadata := []string{}
+			selection.Each(func(_ int, s *goquery.Selection) {
+				metadata = append(metadata, s.Text())
+			})
+			nodes = append(nodes, Metadata{Metadata: metadata})
+		default:
+			// TODO
+		}
 	})
 	document := &Document{
-		Name:     name,
-		Args:     args,
-		Metadata: metadata,
+		CmdName: name,
+		Args:    args,
+		Article: &Article{nodes},
 	}
 	return document, nil
 }
