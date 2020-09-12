@@ -48,6 +48,11 @@ type Example struct {
 	Text string
 }
 
+type List struct {
+	Node
+	Items []string
+}
+
 func ParseDocument(body io.Reader) (*Document, error) {
 	doc, err := goquery.NewDocumentFromReader(body)
 	if err != nil {
@@ -71,6 +76,8 @@ func ParseDocument(body io.Reader) (*Document, error) {
 			nodes = append(nodes, *parseParagraph(s))
 		case s.Is("h2"):
 			nodes = append(nodes, *parseHeading(s))
+		case s.Is("ul"):
+			nodes = append(nodes, *parseList(s))
 		case s.Is(".example"), s.Is("pre"):
 			nodes = append(nodes, *parseExample(s))
 		default:
@@ -114,4 +121,12 @@ func parseHeading(s *goquery.Selection) *Heading {
 
 func parseExample(s *goquery.Selection) *Example {
 	return &Example{Text: s.Text()}
+}
+
+func parseList(s *goquery.Selection) *List {
+	items := []string{}
+	s.Children().Each(func(_ int, s *goquery.Selection) {
+		items = append(items, strings.TrimSpace(s.Text()))
+	})
+	return &List{Items: items}
 }

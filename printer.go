@@ -49,6 +49,10 @@ func (p *printer) printNode(node Node) {
 		for _, line := range strings.Split(node.Text, "\n") {
 			fmt.Fprintf(w, "%s %s\n", au.Green(au.Bold("|")), strings.TrimSpace(line))
 		}
+	case List:
+		for _, item := range node.Items {
+			fmt.Fprintf(w, "%s%s\n", au.Green("• "), item)
+		}
 	case Heading:
 		fmt.Fprintf(w, "%s\n", au.Bold(node.Text))
 	case Text:
