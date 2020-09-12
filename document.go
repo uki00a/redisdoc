@@ -71,7 +71,7 @@ func ParseDocument(body io.Reader) (*Document, error) {
 			nodes = append(nodes, *parseParagraph(s))
 		case s.Is("h2"):
 			nodes = append(nodes, *parseHeading(s))
-		case s.Is(".example"):
+		case s.Is(".example"), s.Is("pre"):
 			nodes = append(nodes, *parseExample(s))
 		default:
 			nodes = append(nodes, Text{Text: s.Text()})
