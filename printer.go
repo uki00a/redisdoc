@@ -35,7 +35,7 @@ func (p *printer) printNode(node Node) {
 	switch node := node.(type) {
 	case Metadata:
 		for _, metadata := range node.Metadata {
-			fmt.Fprintf(w, "%s\n", metadata)
+			fmt.Fprintf(w, "%s%s\n", au.Gray(15, au.Bold("| ")).BgGray(07), au.Gray(19, metadata).BgGray(07))
 		}
 	case Paragraph:
 		for i, node := range node.Nodes {
