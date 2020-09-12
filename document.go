@@ -81,7 +81,7 @@ func parseMetadata(s *goquery.Selection) *Metadata {
 
 func parseParagraph(s *goquery.Selection) *Paragraph {
 	nodes := []Node{}
-	s.Each(func(_ int, c *goquery.Selection) {
+	s.Children().Each(func(_ int, c *goquery.Selection) {
 		switch {
 		case c.Is("a"):
 			nodes = append(nodes, Text{Text: c.Text()})
