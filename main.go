@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/logrusorgru/aurora"
 	"log"
 	"net/http"
 	"os"
@@ -32,6 +33,7 @@ func main() {
 		log.Fatalf("could not fetch document: %v", err)
 	}
 
-	printer := NewPrinter(os.Stdout, doc)
+	au := aurora.NewAurora(true)
+	printer := NewPrinter(os.Stdout, au, doc)
 	printer.Print()
 }
