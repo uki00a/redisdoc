@@ -87,7 +87,7 @@ func ParseDocument(body io.Reader) (*Document, error) {
 
 func parseMetadata(s *goquery.Selection) *Metadata {
 	metadata := []string{}
-	s.Each(func(_ int, c *goquery.Selection) {
+	s.Children().Each(func(_ int, c *goquery.Selection) {
 		metadata = append(metadata, strings.TrimSpace(c.Text()))
 	})
 	return &Metadata{Metadata: metadata}
