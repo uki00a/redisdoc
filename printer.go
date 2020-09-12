@@ -47,7 +47,7 @@ func (p *printer) printNode(node Node) {
 		fmt.Fprintf(w, "\n")
 	case Example:
 		for _, line := range strings.Split(node.Text, "\n") {
-			fmt.Fprintf(w, "%s%s\n", au.Green(au.Bold("|")), line)
+			fmt.Fprintf(w, "%s %s\n", au.Green(au.Bold("|")), strings.TrimSpace(line))
 		}
 	case Heading:
 		fmt.Fprintf(w, "%s\n", au.Bold(node.Text))
