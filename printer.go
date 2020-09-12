@@ -22,11 +22,23 @@ func (p *printer) Print() {
 	fmt.Fprintf(w, "%s %s\n", doc.CmdName, strings.Join(doc.Args, " "))
 
 	for _, node := range doc.Article.Nodes {
-		switch node := node.(type) {
-		case Metadata:
-			for _, metadata := range node.Metadata {
-				fmt.Fprintf(w, "%s\n", metadata)
-			}
+		printNode(w, node)
+	}
+}
+
+func printNode(w io.Writer, node Node) {
+	switch node := node.(type) {
+	case Metadata:
+		for _, metadata := range node.Metadata {
+			fmt.Fprintf(w, "%s\n", metadata)
 		}
+	case Paragraph:
+		for _, node := range node.Nodes {
+			printNode(w, node)
+		}
+	case Text:
+		fmt.Fprintf(w, "%s\n", node.Text)
+	case Code:
+		fmt.Fprintf(w, "%s\n", node.Text)
 	}
 }
