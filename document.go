@@ -117,7 +117,10 @@ func parseParagraph(s *goquery.Selection) *Paragraph {
 }
 
 func parseHeading(s *goquery.Selection) *Heading {
-	return &Heading{Text: s.Text()}
+	// The first node is as follows:
+	//   <a href="options" class="anchor-link">*</a>
+	// This is unnecessary, so remove it.
+	return &Heading{Text: s.Contents().Slice(1, 2).Text()}
 }
 
 func parseExample(s *goquery.Selection) *Example {
