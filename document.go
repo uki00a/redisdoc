@@ -28,12 +28,22 @@ type Paragraph struct {
 	Nodes []Node
 }
 
+type Heading struct {
+	Node
+	Text string
+}
+
 type Code struct {
 	Node
 	Text string
 }
 
 type Text struct {
+	Node
+	Text string
+}
+
+type Example struct {
 	Node
 	Text string
 }
@@ -59,6 +69,10 @@ func ParseDocument(body io.Reader) (*Document, error) {
 			nodes = append(nodes, *parseMetadata(s))
 		case s.Is("p"):
 			nodes = append(nodes, *parseParagraph(s))
+		case s.Is("h2"):
+			nodes = append(nodes, *parseHeading(s))
+		case s.Is(".example"):
+			nodes = append(nodes, *parseExample(s))
 		default:
 			nodes = append(nodes, Text{Text: s.Text()})
 		}
@@ -92,4 +106,12 @@ func parseParagraph(s *goquery.Selection) *Paragraph {
 		}
 	})
 	return &Paragraph{Nodes: nodes}
+}
+
+func parseHeading(s *goquery.Selection) *Heading {
+	return &Heading{Text: s.Text()}
+}
+
+func parseExample(s *goquery.Selection) *Example {
+	return &Example{Text: s.Text()}
 }
