@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/PuerkitoBio/goquery"
 	"io"
-	"regexp"
 	"strings"
 )
 
@@ -110,7 +109,7 @@ func parseParagraph(s *goquery.Selection) *Paragraph {
 		case c.Is("code"):
 			nodes = append(nodes, Code{Text: c.Text()})
 		default:
-			nodes = append(nodes, Text{Text: removeConsecutiveSpaces(c.Text())})
+			nodes = append(nodes, Text{Text: RemoveConsecutiveSpaces(c.Text())})
 		}
 	})
 	return &Paragraph{Nodes: nodes}
@@ -133,14 +132,4 @@ func parseList(s *goquery.Selection) *List {
 		items = append(items, strings.TrimSpace(s.Text()))
 	})
 	return &List{Items: items}
-}
-
-func removeConsecutiveSpaces(s string) string {
-	return consecutiveSpacesRe.ReplaceAllString(s, " ")
-}
-
-var consecutiveSpacesRe *regexp.Regexp
-
-func init() {
-	consecutiveSpacesRe = regexp.MustCompile(`\s{2,}`)
 }

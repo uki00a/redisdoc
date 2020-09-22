@@ -40,7 +40,10 @@ func (p *printer) printNode(node Node) {
 	case Paragraph:
 		for i, node := range node.Nodes {
 			if i > 0 {
-				fmt.Fprintf(w, " ")
+				// TODO This is not ideal...
+				if text, isTextNode := node.(Text); !isTextNode || !StartsWithPunctuation(text.Text) {
+					fmt.Fprintf(w, " ")
+				}
 			}
 			p.printNode(node)
 		}
@@ -56,7 +59,7 @@ func (p *printer) printNode(node Node) {
 	case Heading:
 		fmt.Fprintf(w, "%s\n", au.Bold(node.Text))
 	case Text:
-		fmt.Fprintf(w, "%s", node.Text)
+		fmt.Fprintf(w, "%s", strings.TrimSpace(node.Text))
 	case Code:
 		fmt.Fprintf(w, "%s", au.BgBlue(node.Text))
 	}
